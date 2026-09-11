@@ -23,22 +23,43 @@ Node installed, for two `npx` commands.
 
 Cloudflare builds the site from a Git repository, so the code has to live in one.
 
-The first commit is already made. Sign in to GitHub from your terminal, then
-create the repository and push:
+The commits are already made, on a branch called `main`. Sign in from your
+terminal first:
 
 ```sh
 cd E:/Projects/WeddingCommandAndControl
-
 gh auth login          # GitHub.com, HTTPS, authenticate in the browser
-gh repo create wedding-planner --private --source=. --remote=origin --push
+```
+
+**If you already made an empty repository on GitHub**, point at it and push.
+Substitute your own username and repository name:
+
+```sh
+git remote add origin https://github.com/YOUR-USERNAME/wedding-command-and-control.git
+git push -u origin main
+```
+
+**If you have not made one yet**, this does both at once:
+
+```sh
+gh repo create wedding-command-and-control --private --source=. --remote=origin --push
 ```
 
 Private is the right default. Nothing in here is secret — see step 4 — but the
 guest list and the budget are nobody else's business, and Cloudflare reads a
 private repository perfectly well once you connect it.
 
+> **If the push is rejected** with *"updates were rejected"*, the repository was
+> not quite empty — GitHub adds a README or a licence if you tick those boxes. Do
+> `git pull --rebase origin main` to put its commit underneath yours, then push
+> again.
+
 **You know it worked when** `gh repo view --web` opens your repository and the
 file list shows `index.html`, `assets/`, `supabase/` and `worker/`.
+
+> The repository name has nothing to do with the web address. That comes from
+> what you name the **Cloudflare project** in step 5 — pick something the family
+> can type.
 
 ## 2. Create the database
 
@@ -122,7 +143,7 @@ the file did not save.
 ## 5. Put the site online
 
 1. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** →
-   **Connect to Git**. Authorise GitHub, pick `wedding-planner`.
+   **Connect to Git**. Authorise GitHub, pick your repository.
 2. Name the project **exactly** what you decided in step 3.
 3. Build settings — there is no build step, so they stay empty:
 
