@@ -24,7 +24,7 @@ window.WCC = window.WCC || {};
 
 window.WCC.CONFIG = {
   supabase: {
-    url: 'https://sesyfufypdnlvdrpmwyi.supabase.co/rest/v1/',
+    url: 'https://sesyfufypdnlvdrpmwyi.supabase.co',
     anonKey: 'sb_publishable_jqOnNHhW8_DZmGGMrvspqg__fm0lfZM'
   }
 };

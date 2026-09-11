@@ -18,11 +18,28 @@ window.WCC = window.WCC || {};
     return res ? res.data : null;
   }
 
+  /* The Supabase dashboard shows the project URL and the REST endpoint next to
+     each other, and the wrong one gets copied often enough to be worth handling.
+     supabase-js appends /rest/v1, /auth/v1 and /realtime/v1 itself, so a URL
+     that already carries one produces a double path and 404s everything with no
+     useful error. Take the origin and be done with it. */
+  function projectUrl(raw) {
+    var url = String(raw || '').trim();
+    if (!url) return url;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    try {
+      return new URL(url).origin;
+    } catch (e) {
+      return url.replace(/\/(rest|auth|realtime|storage)\/v[0-9]+\/?$/i, '')
+        .replace(/\/+$/, '');
+    }
+  }
+
   function create(config) {
     if (!window.supabase || !window.supabase.createClient) {
       throw new Error('supabase-js did not load');
     }
-    var db = window.supabase.createClient(config.url, config.anonKey, {
+    var db = window.supabase.createClient(projectUrl(config.url), config.anonKey, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
 
@@ -228,5 +245,5 @@ window.WCC = window.WCC || {};
     };
   }
 
-  W.SupabaseBackend = { create: create };
+  W.SupabaseBackend = { create: create, projectUrl: projectUrl };
 })(window.WCC);
