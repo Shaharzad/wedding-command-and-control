@@ -54,6 +54,7 @@ window.WCC = window.WCC || {};
   var App = {};
   var current = 'today';
   var backupNudgeDismissed = false;
+  var nameNudgeDismissed = false;
   var BACKUP_NAG_DAYS = 14;
 
   function routeFromHash() {
@@ -96,7 +97,11 @@ window.WCC = window.WCC || {};
     var title = couple ? t('app.coupleWedding', { couple: couple }) : t('app.fallbackCouple');
     var date = S.state.settings.weddingDate;
 
-    document.getElementById('sidebarCouple').textContent = couple || t('app.fallbackCouple');
+    var brand = document.getElementById('sidebarCouple');
+    brand.textContent = couple || t('app.fallbackCouple');
+    /* Nameless is a state you can click out of. */
+    brand.classList.toggle('sidebar-couple-unset', !couple);
+    brand.setAttribute('title', couple ? '' : t('banner.nameAction'));
     document.getElementById('sidebarDate').textContent = date ? U.fmtDate(date, 'medium') : t('app.noDate');
     /* The header carries the wedding; the section heading below carries the
        page name, so neither is said twice. */
@@ -217,6 +222,18 @@ window.WCC = window.WCC || {};
     }
 
     var onDailySurface = current === 'today' || current === 'dashboard';
+
+    /* Names are optional at sign-up, so this is the only thing that ever says
+       the wedding is nameless and where to fix it. */
+    if (onDailySurface && !nameNudgeDismissed && !S.coupleName() && S.hasContent()) {
+      html += '<div class="notice" role="status">' +
+        '<h3>' + U.esc(t('banner.nameTitle')) + '</h3>' +
+        '<p>' + U.esc(t('banner.nameBody')) + '</p>' +
+        '<div class="btn-row"><button class="btn btn-emerald" data-banner="names">' +
+        U.esc(t('banner.nameAction')) + '</button>' +
+        '<button class="btn btn-ghost" data-banner="dismiss-names">' +
+        U.esc(t('banner.dismiss')) + '</button></div></div>';
+    }
     if (onDailySurface && !backupNudgeDismissed && S.lastSaveOk() && S.hasContent()) {
       var age = S.backupAgeDays();
       if (age === null || age >= BACKUP_NAG_DAYS) {
@@ -377,10 +394,22 @@ window.WCC = window.WCC || {};
       }
     });
 
+    /* A wedding with no names on it says so in the sidebar; clicking takes you
+       where they are set. Bound to the brand itself, which is never replaced. */
+    document.getElementById('sidebarCouple').addEventListener('click', function () {
+      if (this.classList.contains('sidebar-couple-unset')) {
+        window.location.hash = '#/settings';
+        closeMenu();
+      }
+    });
+
     document.getElementById('banners').addEventListener('click', function (e) {
       var btn = e.target.closest ? e.target.closest('[data-banner]') : null;
       if (!btn) return;
-      if (btn.getAttribute('data-banner') === 'export') W.Views.settings.exportJSON();
+      var which = btn.getAttribute('data-banner');
+      if (which === 'export') W.Views.settings.exportJSON();
+      else if (which === 'names') window.location.hash = '#/settings';
+      else if (which === 'dismiss-names') { nameNudgeDismissed = true; render(); }
       else { backupNudgeDismissed = true; render(); }
     });
 

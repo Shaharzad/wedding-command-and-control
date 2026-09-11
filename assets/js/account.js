@@ -12,6 +12,18 @@ window.WCC = window.WCC || {};
   var Account = {};
 
   var pendingEmail = '';
+  var pendingCouple = null;
+
+  /* Every gate screen is a handful of inputs and one button. Enter should do
+     what the button does, everywhere, without a form element per screen. */
+  function submitOnEnter(inputs, run) {
+    inputs.forEach(function (el) {
+      if (!el) return;
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); run(); }
+      });
+    });
+  }
 
   function config() {
     var c = (W.CONFIG && W.CONFIG.supabase) || {};
@@ -92,9 +104,7 @@ window.WCC = window.WCC || {};
     }
 
     gate.querySelector('[data-act="send"]').addEventListener('click', send);
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') send();
-    });
+    submitOnEnter([input], send);
     input.focus();
   }
 
@@ -134,35 +144,77 @@ window.WCC = window.WCC || {};
 
   function createScreen(errorText) {
     var gate = screen(
-      chrome(t('gate.createTitle'), t('gate.createBody')) +
+      chrome(t('gate.createTitle'), t('gate.createBodyNew')) +
       (errorText ? fail(errorText) : '') +
-      '<div class="field"><label for="gateName">' + U.esc(t('gate.weddingName')) + '</label>' +
-      '<input type="text" id="gateName" placeholder="' + U.esc(t('ph.weddingNameExample')) + '"></div>' +
+      /* A wedding is two names joined, so the form is shaped like one. */
+      '<div class="couple-pair">' +
+      '<div class="field"><label for="gateBride">' + U.esc(t('gate.brideName')) + '</label>' +
+      '<input type="text" id="gateBride" maxlength="40" autocomplete="off" placeholder="' +
+      U.esc(t('ph.sarah')) + '"></div>' +
+      '<span class="couple-amp" aria-hidden="true">' + U.esc(t('gate.amp')) + '</span>' +
+      '<div class="field"><label for="gateGroom">' + U.esc(t('gate.groomName')) + '</label>' +
+      '<input type="text" id="gateGroom" maxlength="40" autocomplete="off" placeholder="' +
+      U.esc(t('ph.ahmed')) + '"></div>' +
+      '</div>' +
+      '<p class="gate-note gate-note-tight">' + U.esc(t('gate.coupleHint')) + '</p>' +
       '<div class="field"><label for="gateWho">' + U.esc(t('gate.yourName')) + '</label>' +
-      '<input type="text" id="gateWho" placeholder="' + U.esc(t('ph.sarah')) + '"></div>' +
+      '<input type="text" id="gateWho" maxlength="60" autocomplete="name" placeholder="' +
+      U.esc(t('ph.sarah')) + '">' +
+      '<p class="hint">' + U.esc(t('gate.yourNameHint')) + '</p>' +
+      '<p class="err" hidden></p></div>' +
       '<button class="btn btn-primary btn-wide" data-act="create">' +
       U.esc(t('gate.createBtn')) + '</button>' +
       signOutRow()
     );
 
-    gate.querySelector('[data-act="create"]').addEventListener('click', function () {
-      var name = gate.querySelector('#gateName').value.trim();
-      var who = gate.querySelector('#gateWho').value.trim();
+    var bride = gate.querySelector('#gateBride');
+    var groom = gate.querySelector('#gateGroom');
+    var who = gate.querySelector('#gateWho');
+    var err = gate.querySelector('#gateWho').parentNode.querySelector('.err');
+
+    function create() {
+      var b = bride.value.trim(), g = groom.value.trim(), me = who.value.trim();
+      /* Your own name is the one thing that is not optional: without it every
+         job you take on is signed with an email address. */
+      if (!me) {
+        err.textContent = t('gate.yourNameRequired');
+        err.hidden = false;
+        who.focus();
+        return;
+      }
+      var label = (b && g) ? (b + ' \u0026 ' + g) : (b || g || t('gate.defaultName'));
+      /* Held until the wedding is open, then written into settings so the
+         sidebar says their names rather than "Your Wedding". */
+      pendingCouple = { brideName: b, groomName: g };
       busy(t('gate.creating'));
-      W.Cloud.createWedding(name || t('gate.defaultName'), who).then(function (id) {
+      W.Cloud.createWedding(label, me).then(function (id) {
         return Account.openWedding(id, true);
-      }).catch(function (e) { createScreen(readableError(e)); });
-    });
+      }).catch(function (e) {
+        pendingCouple = null;
+        createScreen(readableError(e));
+      });
+    }
+
+    gate.querySelector('[data-act="create"]').addEventListener('click', create);
+    submitOnEnter([bride, groom, who], create);
     gate.addEventListener('click', function (e) {
       if (e.target.closest('[data-act="signout"]')) Account.signOut();
     });
-    gate.querySelector('#gateName').focus();
+    bride.focus();
   }
 
   function signOutRow() {
     return '<p class="gate-note">' +
       '<button class="btn btn-ghost btn-sm" data-act="signout">' +
       U.esc(t('gate.signOut')) + '</button></p>';
+  }
+
+  /* Every route into the planner goes through here, so nobody reaches it
+     without a name — the migration offer used to slip past this. */
+  function finishOpening() {
+    if (!W.Cloud.myName()) { nameScreen(''); return true; }
+    W.App.start();
+    return true;
   }
 
   /* Somebody who joined by invitation has no name yet, and would otherwise
@@ -199,7 +251,7 @@ window.WCC = window.WCC || {};
     }
 
     gate.querySelector('[data-act="savename"]').addEventListener('click', save);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') save(); });
+    submitOnEnter([input], save);
     input.focus();
   }
 
@@ -214,10 +266,19 @@ window.WCC = window.WCC || {};
       S.adopt(raw);
       W.Cloud.listen(function (change) { S.applyRemote(change); });
 
+      /* saveSettings writes the whole object, so merge rather than replace. */
+      if (pendingCouple && (pendingCouple.brideName || pendingCouple.groomName)) {
+        var cur = S.state.settings;
+        S.saveSettings({
+          brideName: pendingCouple.brideName || cur.brideName,
+          groomName: pendingCouple.groomName || cur.groomName,
+          weddingDate: cur.weddingDate, venue: cur.venue, hashtag: cur.hashtag
+        });
+      }
+      pendingCouple = null;
+
       if (fresh && Account.localDataAvailable()) return offerMigration();
-      if (!W.Cloud.myName()) { nameScreen(''); return true; }
-      W.App.start();
-      return true;
+      return finishOpening();
     }).catch(function (e) {
       /* No connection: fall back to the copy cached on this device. */
       var cached = null;
@@ -265,10 +326,10 @@ window.WCC = window.WCC || {};
             S.replaceAll(raw, 'import');
             UI.toast(t('gate.migrated'), 'good');
           }
-          W.App.start();
+          finishOpening();
           resolve(true);
         },
-        onClose: function () { W.App.start(); resolve(true); }
+        onClose: function () { finishOpening(); resolve(true); }
       });
     });
   }
