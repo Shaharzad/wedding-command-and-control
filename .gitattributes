@@ -1,0 +1,4 @@
+# Keep line endings stable, whoever clones this. Cloudflare parses _headers
+# line by line, so a stray carriage return there is not cosmetic.
+* text=auto eol=lf
+*.png binary
