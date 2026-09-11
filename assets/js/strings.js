@@ -167,6 +167,7 @@ window.WCC = window.WCC || {};
       'tasks.category': 'Category',
       'tasks.recurrence': 'Repeats',
       'tasks.completedOn': 'Completed {date}',
+      'tasks.overdueTag': 'Overdue',
       'tasks.noDue': 'No due date',
       'tasks.overdueBy': '{n} days overdue',
       'tasks.dueToday': 'Due today',

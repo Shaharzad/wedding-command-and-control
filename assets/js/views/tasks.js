@@ -219,7 +219,8 @@ window.WCC.Views = window.WCC.Views || {};
           } else if (!x.dueDate) {
             dueCell = '<span class="t-sub">' + U.esc(t('tasks.noDue')) + '</span>';
           } else if (x.dueDate < today && !x.completedAt) {
-            dueCell = '<span class="t-over">' + U.esc(U.fmtDate(x.dueDate, 'medium')) + '</span>';
+            dueCell = '<span class="t-over">' + U.esc(U.fmtDate(x.dueDate, 'medium')) +
+              '<b class="t-over-tag">' + U.esc(t('tasks.overdueTag')) + '</b></span>';
           } else {
             dueCell = U.esc(U.fmtDate(x.dueDate, 'medium'));
           }
