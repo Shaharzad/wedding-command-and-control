@@ -1,0 +1,26 @@
+// How Cloudflare serves the planner.
+//
+// The site is a Worker with static assets rather than a Pages project — that is
+// what "Connect to Git" builds now. It runs `npx wrangler deploy` from the
+// repository root on every push to main, so this file is what it obeys. Without
+// it committed, Wrangler guesses a fresh config on each build.
+//
+// `name` is load-bearing: it is the deployed Worker, and changing it creates a
+// second one on a different address. Leave it alone unless you also update the
+// Site URL and Redirect URLs in Supabase -> Authentication -> URL Configuration.
+//
+// What actually gets uploaded is this directory minus .assetsignore's list.
+// `_headers` is read by Cloudflare and applied to responses; it is not served.
+//
+// The keep-alive ping is a separate Worker with its own config in worker/. It is
+// not deployed by this build — run `npx wrangler deploy` inside worker/ once.
+{
+  "name": "wedding-command-and-control",
+  "compatibility_date": "2026-09-11",
+  "assets": {
+    "directory": "."
+  },
+  "observability": {
+    "enabled": true
+  }
+}

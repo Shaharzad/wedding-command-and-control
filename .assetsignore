@@ -1,0 +1,24 @@
+# What must NOT be published to the web.
+#
+# Cloudflare Pages used to exclude these on its own. Workers static assets does
+# not: point it at "." and it cheerfully uploads .git, which means anyone can
+# fetch /.git/config and reconstruct the entire private repository, history and
+# all. Everything the browser actually needs is index.html and assets/.
+
+**/.git
+**/.wrangler
+**/node_modules
+**/.DS_Store
+**/Thumbs.db
+
+# Server-side and repository files. None of them are secret, but nothing in a
+# browser asks for them, and anything served is one day something regretted.
+supabase
+worker
+wrangler.jsonc
+wrangler.toml
+.gitignore
+.gitattributes
+.assetsignore
+README.md
+DEPLOY.md
