@@ -69,10 +69,53 @@ window.WCC.Views = window.WCC.Views || {};
         W.Cloud.invite(vals.email, vals.role).then(function () {
           UI.toast(t('members.invited', { email: vals.email }), 'good');
           refresh(true);
+          openShare(vals.email);
         }).catch(function (e) {
           UI.toast(String((e && e.message) || e), 'bad');
         });
         return true;
+      }
+    });
+  }
+
+  /* The invitation is a row in a table; it reaches nobody by itself. Write out
+     what to send, so the answer to "now what?" is one paste. */
+  function openShare(email) {
+    var message = t('members.shareMessage', {
+      url: window.location.origin + window.location.pathname,
+      email: email
+    });
+
+    UI.openModal({
+      title: t('members.shareTitle', { name: email }),
+      subtitle: t('members.shareBody'),
+      bodyHTML: '<textarea class="share-box" rows="9" readonly>' +
+        U.esc(message) + '</textarea>',
+      footHTML: '<button class="btn" data-role="close">' +
+        U.esc(t('members.shareDone')) + '</button>' +
+        '<button class="btn btn-primary" data-role="copy">' +
+        U.esc(t('members.shareCopy')) + '</button>',
+      onMount: function (node, close) {
+        var box = node.querySelector('.share-box');
+        node.querySelector('[data-role="close"]').addEventListener('click', close);
+        node.querySelector('[data-role="copy"]').addEventListener('click', function () {
+          box.select();
+          var done = false;
+          try { done = document.execCommand('copy'); } catch (e) { done = false; }
+          if (done) {
+            UI.toast(t('members.shareCopied'), 'good');
+            close();
+          } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(message).then(function () {
+              UI.toast(t('members.shareCopied'), 'good');
+              close();
+            }).catch(function () { UI.toast(t('members.shareFailed'), 'bad'); });
+          } else {
+            UI.toast(t('members.shareFailed'), 'bad');
+          }
+        });
+        box.focus();
+        box.select();
       }
     });
   }

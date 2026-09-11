@@ -558,6 +558,12 @@ tfoot td { padding: 11px 14px; border-top: 1px solid var(--rule); font-weight: 7
 .check-row[data-act="open"] { cursor: pointer; }
 .check-row[data-act="open"]:hover { background: var(--paper); }
 
+/* The invitation message, ready to be copied out. */
+.share-box {
+  width: 100%; font-family: inherit; font-size: 13.5px; line-height: 1.55;
+  resize: vertical;
+}
+
 /* ------------------------------------------------------- discussion ---- */
 
 .thread { max-height: 46vh; overflow-y: auto; }
