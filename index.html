@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wedding Planner</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#view">Skip to content</a>
+
+<div class="app" id="app">
+
+  <button class="scrim" id="scrim" hidden aria-label="Close menu"></button>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="1.4">
+          <rect x="10" y="10" width="28" height="28"/>
+          <rect x="10" y="10" width="28" height="28" transform="rotate(45 24 24)"/>
+          <circle cx="24" cy="24" r="7"/>
+        </g>
+      </svg>
+      <div class="sidebar-brand-text">
+        <span class="sidebar-couple" id="sidebarCouple">Your Wedding</span>
+        <span class="sidebar-sub" id="sidebarDate">No date set</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Sections"></nav>
+
+    <div class="sidebar-foot">
+      <div id="accountRow" hidden></div>
+      <p id="sidebarSaveNote">Saved on this device</p>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-text">
+        <h1 class="topbar-title" id="pageTitle">Today</h1>
+        <p class="topbar-couple" id="topbarCouple">Your Wedding</p>
+      </div>
+      <button class="btn btn-sm topbar-search" id="globalSearch">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="8.8" cy="8.8" r="5.3"/><path d="m12.8 12.8 4 4"/>
+        </svg>
+        <span>Search</span>
+      </button>
+      <div class="topbar-count" id="topbarCount"></div>
+    </header>
+    <div class="motif-band" aria-hidden="true"></div>
+
+    <div class="banners" id="banners"></div>
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+
+</div>
+
+<div class="modal-root" id="modalRoot" hidden></div>
+<div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+<div class="chart-tip" id="chartTip" role="status" hidden></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<!-- supabase-js, vendored rather than pulled from a CDN: it keeps the app
+     working offline, and removes a third party from the critical path.
+     Plain script, so there is still no build step anywhere. -->
+<script src="assets/vendor/supabase.js"></script>
+
+<script src="assets/js/util.js"></script>
+<script src="assets/js/strings.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/cloud.js"></script>
+<script src="assets/js/cloud-supabase.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/module.js"></script>
+<script src="assets/js/account.js"></script>
+<script src="assets/js/comments.js"></script>
+<script src="assets/js/search.js"></script>
+<script src="assets/js/sample.js"></script>
+<script src="assets/js/views/today.js"></script>
+<script src="assets/js/views/dashboard.js"></script>
+<script src="assets/js/views/tasks.js"></script>
+<script src="assets/js/views/budget.js"></script>
+<script src="assets/js/views/guests.js"></script>
+<script src="assets/js/views/events.js"></script>
+<script src="assets/js/views/analytics.js"></script>
+<script src="assets/js/views/vendors.js"></script>
+<script src="assets/js/views/wardrobe.js"></script>
+<script src="assets/js/views/catering.js"></script>
+<script src="assets/js/views/shopping.js"></script>
+<script src="assets/js/views/contacts.js"></script>
+<script src="assets/js/views/invitations.js"></script>
+<script src="assets/js/views/seating.js"></script>
+<script src="assets/js/views/decor.js"></script>
+<script src="assets/js/views/photos.js"></script>
+<script src="assets/js/views/gifts.js"></script>
+<script src="assets/js/views/responsibilities.js"></script>
+<script src="assets/js/views/nikah.js"></script>
+<script src="assets/js/views/honeymoon.js"></script>
+<script src="assets/js/views/command.js"></script>
+<script src="assets/js/views/activity.js"></script>
+<script src="assets/js/views/members.js"></script>
+<script src="assets/js/views/settings.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

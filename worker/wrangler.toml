@@ -1,0 +1,18 @@
+# The keep-alive ping. Deploy with:  npx wrangler deploy
+#
+# Set the two values below to your own project first. Both are public: the URL
+# names the project and the anon key only gets you as far as the row level
+# security policies allow, which for this table is nowhere.
+
+name = "wedding-keepalive"
+main = "keepalive.js"
+compatibility_date = "2025-09-01"
+
+[triggers]
+# Monday and Thursday, 06:00 UTC. Twice a week rather than once, so a single
+# missed run cannot let the seven-day clock run out.
+crons = ["0 6 * * 1", "0 6 * * 4"]
+
+[vars]
+SUPABASE_URL = ""
+SUPABASE_ANON_KEY = ""

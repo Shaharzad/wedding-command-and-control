@@ -1,0 +1,18 @@
+# Cloudflare Pages reads this file. One block per path pattern.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in wss://*.supabase.in; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+# The planner is one page; its scripts and styles change with every deploy.
+/index.html
+  Cache-Control: no-cache
+
+/assets/js/config.js
+  Cache-Control: no-cache
+
+/assets/*
+  Cache-Control: public, max-age=600
