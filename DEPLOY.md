@@ -103,9 +103,18 @@ Nothing to test yet — the site does not exist until step 5.
 
 ## 4. Point the planner at your project
 
-**Project Settings** → **API Keys** (older dashboards call it **API**). You want
-the **Project URL** and the **anon** / **public** key. Put them in
-[assets/js/config.js](assets/js/config.js):
+Two values, and Supabase keeps them on two different pages.
+
+**The URL:** **Project Settings** → **Data API** → **Project URL**. It looks like
+`https://abcdefghijkl.supabase.co`. If you cannot find that page, read it off the
+dashboard's own address bar — `.../dashboard/project/abcdefghijkl` means your URL
+is `https://abcdefghijkl.supabase.co`.
+
+**The key:** **Project Settings** → **API Keys** → the public one. Newer projects
+call it **publishable** and it starts `sb_publishable_`; older ones call it
+**anon** or **public** and it is a long `eyJ...` token. Either works.
+
+Put them in [assets/js/config.js](assets/js/config.js):
 
 ```js
 window.WCC.CONFIG = {
@@ -132,8 +141,8 @@ step 2, which resolve every request through the `members` table. That is why the
 file is committed rather than hidden — and why a private repository is about your
 guest list, not about this key.
 
-The key never to paste anywhere is the **service role** key on that same page. It
-bypasses every rule. This app does not use it and never will.
+The key never to paste anywhere is the one labelled **secret** or **service
+role**. It bypasses every rule. This app does not use it and never will.
 
 **You know it worked when** you open `index.html` from disk and it asks you to
 sign in instead of showing the planner. Sign-in will not actually complete from
