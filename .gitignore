@@ -1,3 +1,6 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Wrangler local state (cached account id, build temp)
+.wrangler/

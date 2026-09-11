@@ -202,10 +202,15 @@ in [worker/wrangler.toml](worker/wrangler.toml), then:
 
 ```sh
 cd worker
-npx wrangler deploy
+npx wrangler deploy --config wrangler.toml
 cd ..
 git add worker/wrangler.toml && git commit -m "Keep-alive worker" && git push
 ```
+
+> **`--config` is not optional.** Wrangler searches upwards for a configuration
+> file. Leave it off and it finds the site's `wrangler.jsonc` in the repository
+> root and redeploys the site instead — reporting success, for the wrong Worker.
+> Check the name in its output: you want `wedding-keepalive`.
 
 Wrangler prints the worker's URL when it finishes. **Open it.** It runs the same
 ping on the spot and reports the result, so you find out now rather than on a

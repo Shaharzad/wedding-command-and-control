@@ -1,4 +1,11 @@
-# The keep-alive ping. Deploy with:  npx wrangler deploy
+# The keep-alive ping.
+#
+# Deploy with:  npx wrangler deploy --config wrangler.toml
+#
+# The --config is not optional. Wrangler searches upwards for a config file,
+# finds the site's wrangler.jsonc in the repository root, and cheerfully
+# redeploys the whole site instead of this Worker. Naming the file is the
+# only way to be sure which of the two you just deployed.
 #
 # Set the two values below to your own project first. Both are public: the URL
 # names the project and the anon key only gets you as far as the row level
@@ -6,7 +13,7 @@
 
 name = "wedding-keepalive"
 main = "keepalive.js"
-compatibility_date = "2025-09-01"
+compatibility_date = "2026-09-11"
 
 [triggers]
 # Monday and Thursday, 06:00 UTC. Twice a week rather than once, so a single

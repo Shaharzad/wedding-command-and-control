@@ -13,7 +13,9 @@
 // `_headers` is read by Cloudflare and applied to responses; it is not served.
 //
 // The keep-alive ping is a separate Worker with its own config in worker/. It is
-// not deployed by this build — run `npx wrangler deploy` inside worker/ once.
+// not deployed by this build. Deploy it once, naming its config explicitly:
+//   cd worker && npx wrangler deploy --config wrangler.toml
+// Without --config, Wrangler walks up, finds this file, and redeploys the site.
 {
   "name": "wedding-command-and-control",
   "compatibility_date": "2026-09-11",
