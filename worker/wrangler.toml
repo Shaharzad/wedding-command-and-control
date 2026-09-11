@@ -14,5 +14,5 @@ compatibility_date = "2025-09-01"
 crons = ["0 6 * * 1", "0 6 * * 4"]
 
 [vars]
-SUPABASE_URL = ""
-SUPABASE_ANON_KEY = ""
+SUPABASE_URL = "https://sesyfufypdnlvdrpmwyi.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_jqOnNHhW8_DZmGGMrvspqg__fm0lfZM"
